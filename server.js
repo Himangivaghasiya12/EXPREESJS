@@ -1,27 +1,15 @@
 
-// --------------------------lecture2----------------------------------------
+// --------------------------lecture 3----------------------------------------
 
 const express = require('express');
 const server = express();   // create server
-const morgan = require('morgan');
-
-server.use(morgan('dev'));
-
-const loggerFun = (req, res, next) => {
-    console.log(req.ip, req.url, req.method);
-    next();
-}
-server.use(loggerFun);
-
-// in-built middleware---------------
-
-server.use(express.json());
-server.use(express.urlencoded({ extended: false}));
-server.use("/hello", express.static('public'));
+const data = require('./friend.json');
+const fs = require('fs');
+const data = fs.readFileSync('./friend.json', 'utf8');
+console.log(data);
 
 const myFun = (req, res, next) =>{
-    console.log(req.body);
-    next();
+    // console.log(req.query);
     if(req.query.age >= 18){
         console.log('Success');
         next();
@@ -30,9 +18,9 @@ const myFun = (req, res, next) =>{
     }
 }
 
-// server.use(myFun);  // application
+server.use(myFun);  // application
 
-// POST, GET PUT, PATCH, DELETE------
+// POST, GET PUT, PATCH, DELETE----------
 
 server.get('/', (req, res) => {
     res.write('Welcome to Express');
@@ -49,9 +37,19 @@ server.post('/', (req, res) => {
     res.send('Welcome to Post Method');
 })
 
+server.put('/', (req, res) => {
+    res.json({msg:'Hello Put Method Called'});
+})
+
+server.patch('/', (req, res) => {
+    res.status(400);
+    res.json({msg:'Hello Patch Method Called'});
+})
+
+server.get('/user', (req, res) => {
+    res.json(JSON.parse(data));
+})
 
 server.listen(8000, () => {
-    console.log('Server Start at http://localhost1210');
+    console.log('Server Start at http://localhost:1210');
 });
-
-
